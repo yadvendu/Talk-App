@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Talk</string>
+
+    // base activity
+    <string name="app_logout_dialog_message">Are you sure you want to exit the App?</string>
+    <string name="app_logout_dialog_positive_button">Yes</string>
+    <string name="app_logout_dialog_negative_button">No</string>
+
+    //login
+    <string name="enter_email_hint">Enter Email</string>
+    <string name="enter_password_hint">Enter Password</string>
+    <string name="login_button_text">Login</string>
+    <string name="reset_password_text">Reset Password</string>
+    <string name="no_account_text">Don\'t have account?</string>
+    <string name="sign_up_text">Sign Up</string>
+
+    //sign up
+    <string name="enter_name_hint">Enter Name</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="sign_up_button_text">Sing Up</string>
+    <string name="password_mismatch_error">Password Mismatch</string>
+    <string name="invalid_email_error">Invalid Email</string>
+    <string name="sign_up_successfully">SignUp Successful</string>
+    <string name="sign_up_failed">SignUp Failed</string>
+</resources>
