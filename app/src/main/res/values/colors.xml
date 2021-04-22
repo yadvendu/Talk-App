@@ -8,4 +8,7 @@
 
     //login
     <color name="login_button_text_color">#fff</color>
+
+    //profile
+    <color name="log_out_button_background_color">#E91E63</color>
 </resources>

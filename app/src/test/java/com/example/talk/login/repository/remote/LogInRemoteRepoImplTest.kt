@@ -1,7 +1,7 @@
 package com.example.talk.login.repository.remote
 
-import com.example.talk.commons.network.FireBaseRemoteExecutor
-import com.example.talk.commons.network.FireBaseResponse
+import com.example.talk.commons.network.firebase.FireBaseRemoteExecutor
+import com.example.talk.commons.network.firebase.FireBaseResponse
 import com.example.talk.loginactivity.repository.remote.LogInRemoteRepository
 import com.example.talk.loginactivity.repository.remote.LogInRemoteRepositoryImpl
 import io.mockk.MockKAnnotations
@@ -27,7 +27,8 @@ class LogInRemoteRepoImplTest {
     @Test
     fun `given authenticateUserUsingEmailAndPassword encloses Firebase Success Response with true boolean value, when performUserSignIn, then return Result with data as true`() {
         //Given
-        every { fireBaseRemoteExecutor.authenticateUserUsingEmailAndPassword<Boolean>("abc@gmail.com", "abc123") } returns Single.just(FireBaseResponse.FirebaseSuccessResponse(true))
+        every { fireBaseRemoteExecutor.authenticateUserUsingEmailAndPassword<Boolean>("abc@gmail.com", "abc123") } returns Single.just(
+            FireBaseResponse.FirebaseSuccessResponse(true))
 
         //When
         val testObserver = logInRemoteRepository.performUserSignIn("abc@gmail.com", "abc123").test()
@@ -40,7 +41,8 @@ class LogInRemoteRepoImplTest {
     @Test
     fun `given authenticateUserUsingEmailAndPassword encloses Firebase Error Response with false boolean value, when performUserSignIn, then return Result with data as false`() {
         //Given
-        every { fireBaseRemoteExecutor.authenticateUserUsingEmailAndPassword<Boolean>("abc@gmail.com", "abc123") } returns Single.just(FireBaseResponse.FireBaseErrorResponse(false))
+        every { fireBaseRemoteExecutor.authenticateUserUsingEmailAndPassword<Boolean>("abc@gmail.com", "abc123") } returns Single.just(
+            FireBaseResponse.FireBaseErrorResponse(false))
 
         //When
         val testObserver = logInRemoteRepository.performUserSignIn("abc@gmail.com", "abc123").test()

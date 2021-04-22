@@ -1,6 +1,5 @@
 package com.example.talk.login.viewmodel
 
-import android.util.Patterns
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.talk.commons.Event
@@ -17,7 +16,6 @@ import org.junit.*
 import org.junit.Assert.*
 import org.mockito.*
 import org.mockito.Mockito.*
-import java.util.regex.Pattern
 
 class LoginViewModelTest {
 

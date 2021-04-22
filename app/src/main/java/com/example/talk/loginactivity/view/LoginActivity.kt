@@ -12,6 +12,7 @@ import com.example.talk.databinding.ActivityLoginBinding
 import com.example.talk.commons.di.ViewModelProviderFactory
 import com.example.talk.loginactivity.viewmodel.LoginViewEvents
 import com.example.talk.loginactivity.viewmodel.LoginViewModel
+import com.example.talk.profile.view.ProfileActivity
 import com.example.talk.signup.view.SingUpActivity
 import javax.inject.Inject
 
@@ -77,7 +78,10 @@ class LoginActivity : TalkBaseActivity<ActivityLoginBinding>() {
             when (it) {
                 is LoginViewEvents.OpenHomeScreen -> {
                     if (it.isLoggedIn) {
-                        Toast.makeText(this, "Logged In Successfully", Toast.LENGTH_SHORT).show()
+                        Intent(this,ProfileActivity::class.java).apply {
+                            startActivity(this)
+                        }
+                        //Toast.makeText(this, "Logged In Successfully", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this, "Logged In Failed", Toast.LENGTH_SHORT).show()
                     }

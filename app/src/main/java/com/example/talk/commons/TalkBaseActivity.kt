@@ -88,10 +88,10 @@ abstract class TalkBaseActivity<B: ViewDataBinding>: DaggerAppCompatActivity() {
      */
     protected fun showProgressDialog() {
         progressBar.visibility = View.VISIBLE
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-        )
+//        window.setFlags(
+//            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+//            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+//        )
     }
 
     /**
@@ -99,7 +99,7 @@ abstract class TalkBaseActivity<B: ViewDataBinding>: DaggerAppCompatActivity() {
      */
     protected fun dismissProgressDialog() {
         progressBar.visibility = View.GONE
-        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        //window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     /**

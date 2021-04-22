@@ -6,20 +6,25 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Patterns
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.example.talk.R
+import com.example.talk.commons.Event
 import com.example.talk.commons.util.FirebaseNodes
 import com.example.talk.commons.TalkBaseActivity
+import com.example.talk.commons.di.ViewModelProviderFactory
 import com.example.talk.databinding.ActivitySingUpBinding
-import com.google.firebase.auth.FirebaseAuth
+import com.example.talk.signup.viewmodel.SignUpViewEvents
+import com.example.talk.signup.viewmodel.SignUpViewModel
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import javax.inject.Inject
 
 class SingUpActivity : TalkBaseActivity<ActivitySingUpBinding>() {
 
@@ -29,6 +34,10 @@ class SingUpActivity : TalkBaseActivity<ActivitySingUpBinding>() {
     private var localImageUri: Uri? = null
     private lateinit var fileStorage: StorageReference
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProviderFactory
+    private lateinit var signUpViewModel: SignUpViewModel
+
     companion object {
         private const val PICK_IMAGE = 100
         private const val PICK_IMAGE_PERMISSION_CODE = 101
@@ -37,105 +46,123 @@ class SingUpActivity : TalkBaseActivity<ActivitySingUpBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = bindView(R.layout.activity_sing_up)
+        signUpViewModel = ViewModelProviders.of(this, viewModelFactory).get(SignUpViewModel::class.java)
+
         with(binding) {
             lifecycleOwner = this@SingUpActivity
             singUpActivity = this@SingUpActivity
+            viewModel = signUpViewModel
         }
 
         fileStorage = FirebaseStorage.getInstance().reference
         binding.signUpImageView.setOnClickListener {
             pickProfileImage()
         }
+
+        observeViewEvents()
+        observeViewState()
     }
 
-    /**
-     * This method is used for sign up validation
-     */
-    fun doSingUpValidation() {
+    fun performUserSignUp() {
         with(binding) {
-            when {
-                emailTextView.text?.trim()?.isEmpty() == true -> {
-                    emailTextView.error = getString(R.string.enter_email_hint)
-                }
-                passwordTextView.text?.trim()?.isEmpty() == true -> {
-                    passwordTextView.error = getString(R.string.enter_password_hint)
-                }
-                confirmPasswordTextView.text?.trim()?.isEmpty() == true -> {
-                    confirmPasswordTextView.error = getString(R.string.confirm_password_hint)
-                }
-                passwordTextView.text?.trim().toString() != confirmPasswordTextView.text?.trim()
-                    .toString() -> {
-                    confirmPasswordTextView.error = getString(R.string.password_mismatch_error)
-                }
-                nameTextView.text?.trim()?.isEmpty() == true -> {
-                    nameTextView.error = getString(R.string.enter_name_hint)
-                }
-                else -> {
-                    val email = emailTextView.text?.trim().toString()
-                    val password = passwordTextView.text?.trim().toString()
-                    val firebaseAuth = FirebaseAuth.getInstance()
+            signUpViewModel.performUserSignUp(
+                emailTextView.text?.trim().toString(),
+                passwordTextView.text?.trim().toString(),
+                confirmPasswordTextView.text?.trim().toString(),
+                nameTextView.text?.trim().toString()
+            )
+        }
+    }
 
-                    if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                        emailTextView.error = getString(R.string.invalid_email_error)
+    private fun observeViewEvents() {
+        signUpViewModel.viewEvents.observe(this, Observer {
+            handViewEvents(it)
+        })
+    }
+
+    private fun observeViewState() {
+        signUpViewModel.viewState.observe(this, Observer {
+            // Do something on observing view state
+        })
+    }
+
+    private fun handViewEvents(events: Event<SignUpViewEvents>) {
+        events.getContentIfNotHandled()?.let {
+            when (it) {
+                is SignUpViewEvents.SignUpValidation -> {
+                    with(binding) {
+                        when {
+                            it.isEmailEmpty -> {
+                                emailTextView.error = getString(R.string.enter_email_hint)
+                            }
+                            it.isConfirmPasswordEmpty -> {
+                                confirmPasswordTextView.error =
+                                    getString(R.string.confirm_password_hint)
+                            }
+                            it.isEmailNotValid -> {
+                                emailTextView.error = getString(R.string.invalid_email_error)
+                            }
+                            it.isNameEmpty -> {
+                                nameTextView.error = getString(R.string.enter_name_hint)
+                            }
+                            it.isPasswordEmpty -> {
+                                passwordTextView.error = getString(R.string.enter_password_hint)
+                            }
+                            it.isPasswordMismatch -> {
+                                confirmPasswordTextView.error =
+                                    getString(R.string.password_mismatch_error)
+                            }
+                        }
                     }
-
-                    firebaseAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                firebaseUser = firebaseAuth.currentUser
-                                localImageUri?.let { imageUri ->
-                                    updateNameAndPhoto(imageUri)
-                                } ?: updateNameOnly()
-                                updateNameOnly()
-                            } else {
-                                Toast.makeText(
-                                    this@SingUpActivity,
-                                    getString(R.string.sign_up_failed),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
+                }
+                is SignUpViewEvents.SignUpStatus -> {
+                    if (it.isSignUpSuccessFull) {
+                        //finish()
+                        Toast.makeText(this,"SignUpSuccessful", Toast.LENGTH_LONG).show()
+                    }else {
+                        Toast.makeText(this,"SignUpFailed", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
     }
 
-    private fun updateNameOnly() {
-        val request = UserProfileChangeRequest.Builder()
-            .setDisplayName(binding.nameTextView.text?.trim().toString())
-            .build()
-
-        firebaseUser?.updateProfile(request)?.addOnCompleteListener {
-            if (it.isSuccessful) {
-                val userId = firebaseUser?.uid
-                dataBaseReference =
-                    FirebaseDatabase.getInstance().reference.child(FirebaseNodes.users)
-                val userData = createUser(null)
-
-                userId?.let { it1 ->
-                    dataBaseReference?.child(it1)?.setValue(userData)
-                        ?.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Toast.makeText(
-                                    this@SingUpActivity,
-                                    getString(R.string.sign_up_successfully),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                finish()
-                            } else {
-                                Toast.makeText(
-                                    this@SingUpActivity,
-                                    getString(R.string.sign_up_failed),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                }
-            } else {
-                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+//    private fun updateNameOnly() {
+//        val request = UserProfileChangeRequest.Builder()
+//            .setDisplayName(binding.nameTextView.text?.trim().toString())
+//            .build()
+//
+//        firebaseUser?.updateProfile(request)?.addOnCompleteListener {
+//            if (it.isSuccessful) {
+//                val userId = firebaseUser?.uid
+//                dataBaseReference =
+//                    FirebaseDatabase.getInstance().reference.child(FirebaseNodes.users)
+//                val userData = createUser(null)
+//
+//                userId?.let { it1 ->
+//                    dataBaseReference?.child(it1)?.setValue(userData)
+//                        ?.addOnCompleteListener { task ->
+//                            if (task.isSuccessful) {
+//                                Toast.makeText(
+//                                    this@SingUpActivity,
+//                                    getString(R.string.sign_up_successfully),
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                                finish()
+//                            } else {
+//                                Toast.makeText(
+//                                    this@SingUpActivity,
+//                                    getString(R.string.sign_up_failed),
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                            }
+//                        }
+//                }
+//            } else {
+//                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
 
     private fun createUser(imageUri: Uri?): HashMap<String, String> {
         val userHashMap = HashMap<String, String>()

@@ -22,4 +22,9 @@
     <string name="invalid_email_error">Invalid Email</string>
     <string name="sign_up_successfully">SignUp Successful</string>
     <string name="sign_up_failed">SignUp Failed</string>
+
+    //Profile Activity
+    <string name="save_profile_button_text">Save</string>
+    <string name="menu_change_picture">Change Picture</string>
+    <string name="menu_remove_picture">Remove Picture</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.talk.commons.network
+package com.example.talk.commons.network.firebase
 
 sealed class FireBaseResponse<T> {
     data class FirebaseSuccessResponse<T>(val response: T): FireBaseResponse<T>()

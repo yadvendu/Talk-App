@@ -1,8 +1,9 @@
 package com.example.talk.loginactivity.repository.remote
 
-import com.example.talk.commons.network.FireBaseRemoteExecutor
-import com.example.talk.commons.network.FireBaseResponse
+import com.example.talk.commons.network.firebase.FireBaseRemoteExecutor
+import com.example.talk.commons.network.firebase.FireBaseResponse
 import com.example.talk.commons.network.Result
+import com.example.talk.commons.util.exhaustive
 import io.reactivex.Single
 
 class LogInRemoteRepositoryImpl(private val fireBaseRemoteExecutor: FireBaseRemoteExecutor) :
@@ -27,7 +28,7 @@ class LogInRemoteRepositoryImpl(private val fireBaseRemoteExecutor: FireBaseRemo
                     is FireBaseResponse.FireBaseErrorResponse -> {
                         Single.just(Result.error(data = result.error, msg = "Authentication Failed"))
                     }
-                }
+                }.exhaustive
             }
     }
 }

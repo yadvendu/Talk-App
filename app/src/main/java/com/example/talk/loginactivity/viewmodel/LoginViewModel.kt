@@ -5,7 +5,6 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.talk.R
 import com.example.talk.commons.Event
 import com.example.talk.commons.network.Result
 import com.example.talk.commons.util.exhaustive

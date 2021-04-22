@@ -5,28 +5,24 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="singUpActivity"
             type="com.example.talk.signup.view.SingUpActivity" />
-
-        <variable
-            name="viewModel"
-            type="com.example.talk.signup.viewmodel.SignUpViewModel" />
     </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".signup.view.SingUpActivity">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_32"
             app:cardCornerRadius="@dimen/dp_16"
             app:cardElevation="@dimen/dp_8"
-            app:layout_constraintTop_toBottomOf="@+id/circular_image_card_view">
+            app:layout_constraintTop_toBottomOf="@+id/circular_image_card_view"
+            tools:layout_editor_absoluteX="32dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -62,44 +58,15 @@
                         android:hint="@string/enter_email_hint" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/dp_8"
-                    app:passwordToggleEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/password_text_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/enter_password_hint" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/dp_8"
-                    app:passwordToggleEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/confirm_password_text_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/confirm_password_hint" />
-                </com.google.android.material.textfield.TextInputLayout>
-
                 <Button
                     android:id="@+id/sign_up_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_8"
                     android:background="@color/colorPrimary"
-                    android:onClick="@{() -> singUpActivity.performUserSignUp()}"
                     android:paddingStart="@dimen/dp_16"
                     android:paddingEnd="@dimen/dp_16"
-                    android:text="@string/sign_up_button_text"
+                    android:text="@string/save_profile_button_text"
                     android:textColor="@color/login_button_text_color" />
 
             </LinearLayout>
@@ -126,15 +93,19 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.cardview.widget.CardView>
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            visibleorgone="@{viewModel.viewState.loading}"
+        <Button
+            android:id="@+id/log_out_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dp_120"
+            android:layout_marginBottom="@dimen/dp_32"
+            android:backgroundTint="@color/log_out_button_background_color"
+            android:paddingStart="@dimen/dp_16"
+            android:paddingEnd="@dimen/dp_16"
+            android:text="@string/save_profile_button_text"
+            android:textColor="@color/login_button_text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.553"
             app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
